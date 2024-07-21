@@ -17,7 +17,7 @@ class AiChatterApp extends StatelessWidget {
           value: locator<ThemeCubit>(),
         ),
       ],
-      child: Builder(builder: (context) {
+      child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (context, state) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: AppConstants.appName,

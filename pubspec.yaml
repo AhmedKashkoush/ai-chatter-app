@@ -34,15 +34,33 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.6
   flutter_dotenv: ^5.1.0
+
   get_it: ^7.6.7
   google_generative_ai: ^0.4.3
   lottie: ^3.1.2
   shared_preferences: ^2.2.3
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
+  flutter_native_splash: ^2.3.11
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#1e1d23"
+  image: assets/images/logo.png
+  android_12:
+    color: "#ffffff"
+    color_dark: "#1e1d23"
+    image: assets/images/logo.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -56,6 +74,7 @@ flutter:
   assets:
     - .env
     - assets/lotties/
+    - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

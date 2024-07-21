@@ -1,9 +1,14 @@
+import 'package:ai_chatter/config/themes/theme_cubit.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:ai_chatter/core/lotties.dart';
 import 'package:ai_chatter/core/strings.dart';
+import 'package:ai_chatter/core/widgets/custom_elevated_button.dart';
 import 'package:ai_chatter/core/widgets/orientation_widget.dart';
+import 'package:ai_chatter/features/introduction/widgets/start_chatting_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
 part 'layout/introduction_screen_portrait.dart';
@@ -14,9 +19,21 @@ class IntroductionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const OrientationWidget(
-      portrait: _IntroductionScreenPortrait(),
-      landscape: _IntroductionScreenLandscape(),
+    bool isDark = context.colorScheme.brightness == Brightness.dark;
+    return Scaffold(
+      appBar: AppBar(actions: [
+        IconButton(
+          onPressed: () {
+            context.read<ThemeCubit>().themeMode =
+                isDark ? ThemeMode.light : ThemeMode.dark;
+          },
+          icon: Icon(isDark ? CupertinoIcons.brightness : CupertinoIcons.moon),
+        ),
+      ]),
+      body: const OrientationWidget(
+        portrait: _IntroductionScreenPortrait(),
+        landscape: _IntroductionScreenLandscape(),
+      ),
     );
   }
 }
