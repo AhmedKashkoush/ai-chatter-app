@@ -1,7 +1,8 @@
 import 'package:ai_chatter/config/routes/routes.dart';
 import 'package:ai_chatter/core/extensions/navigation_extension.dart';
-import 'package:ai_chatter/core/keys.dart';
-import 'package:ai_chatter/core/strings.dart';
+import 'package:ai_chatter/core/utils/keys.dart';
+import 'package:ai_chatter/core/utils/strings.dart';
+
 import 'package:ai_chatter/core/widgets/custom_elevated_button.dart';
 import 'package:ai_chatter/locator.dart';
 import 'package:flutter/material.dart';

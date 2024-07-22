@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:ai_chatter/config/routes/routes.dart';
 import 'package:ai_chatter/core/extensions/navigation_extension.dart';
-import 'package:ai_chatter/core/keys.dart';
+import 'package:ai_chatter/core/utils/keys.dart';
 import 'package:ai_chatter/core/widgets/app_logo.dart';
 import 'package:ai_chatter/locator.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:ai_chatter/core/constants.dart';
-import 'package:ai_chatter/core/images.dart';
+import 'package:ai_chatter/core/utils/constants.dart';
+import 'package:ai_chatter/core/utils/images.dart';
 import 'package:flutter/material.dart';
 
 class AppLogo extends StatelessWidget {

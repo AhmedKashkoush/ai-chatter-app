@@ -1,4 +1,4 @@
-import 'package:ai_chatter/core/keys.dart';
+import 'package:ai_chatter/core/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';

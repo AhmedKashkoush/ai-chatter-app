@@ -1,9 +1,8 @@
 import 'package:ai_chatter/config/themes/theme_cubit.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
-import 'package:ai_chatter/core/lotties.dart';
-import 'package:ai_chatter/core/strings.dart';
-import 'package:ai_chatter/core/widgets/custom_elevated_button.dart';
+import 'package:ai_chatter/core/utils/lotties.dart';
+import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/core/widgets/orientation_widget.dart';
 import 'package:ai_chatter/features/introduction/widgets/start_chatting_button.dart';
 import 'package:flutter/cupertino.dart';

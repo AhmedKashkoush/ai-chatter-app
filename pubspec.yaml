@@ -30,14 +30,15 @@ environment:
 dependencies:
   chat_bubbles: ^1.6.0
   cupertino_icons: ^1.0.2
+  dartz: ^0.10.1
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
   flutter_dotenv: ^5.1.0
-
   get_it: ^7.6.7
   google_generative_ai: ^0.4.3
   lottie: ^3.1.2
+  share_plus: ^7.2.2
   shared_preferences: ^2.2.3
 
 dev_dependencies:
