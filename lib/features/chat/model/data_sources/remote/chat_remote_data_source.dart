@@ -1,3 +1,4 @@
+// import 'package:ai_chatter/core/errors/exceptions.dart';
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -12,6 +13,7 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   const ChatRemoteDataSource(this.model);
   @override
   Future<GenerateContentResponse> generateResponse(String message) async {
+    // throw const NetworkException(message: 'Check your internet connection');
     return await AppUtils.generateResponse(model, message);
   }
 

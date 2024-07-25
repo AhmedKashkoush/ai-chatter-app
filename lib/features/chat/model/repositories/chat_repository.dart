@@ -70,4 +70,18 @@ class ChatRepository implements BaseChatRepository {
       );
     }
   }
+
+  @override
+  Either<Failure, List<MessageModel>> getCachedChat() {
+    try {
+      final List<MessageModel> messages = localDataSource.getCachedChat();
+      return Right(messages);
+    } on CacheException catch (e) {
+      return Left(
+        CacheFailure(
+          message: e.message,
+        ),
+      );
+    }
+  }
 }

@@ -63,6 +63,12 @@ class _LoadingBarState extends State<_LoadingBar>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _animation,

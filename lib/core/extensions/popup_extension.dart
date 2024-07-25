@@ -1,3 +1,5 @@
+import 'package:ai_chatter/core/extensions/space_extension.dart';
+import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 
 extension PopUpExtension on BuildContext {
@@ -13,12 +15,23 @@ extension PopUpExtension on BuildContext {
             ));
   }
 
-  void showSnackBar({required String message}) {
+  void showSnackBar({required String message, IconData? icon}) {
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         dismissDirection: DismissDirection.horizontal,
-        content: Text(message),
+        backgroundColor: colorScheme.onBackground,
+        content: Row(
+          children: [
+            if (icon != null)
+              Icon(
+                icon,
+                color: colorScheme.background,
+              ),
+            10.w,
+            Text(message),
+          ],
+        ),
       ),
     );
   }

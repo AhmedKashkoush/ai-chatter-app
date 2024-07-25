@@ -9,4 +9,5 @@ abstract class BaseChatRepository {
   Future<Either<Failure, List<String>>> generateSuggestionsFrom(
       String response);
   Future<Either<Failure, Unit>> cacheChat(List<MessageModel> messages);
+  Either<Failure, List<MessageModel>> getCachedChat();
 }

@@ -2,7 +2,7 @@ import 'package:ai_chatter/config/routes/router.dart';
 import 'package:ai_chatter/config/themes/theme_cubit.dart';
 import 'package:ai_chatter/config/themes/themes.dart';
 import 'package:ai_chatter/core/utils/constants.dart';
-import 'package:ai_chatter/features/chat/view/logic/chat_cubit.dart';
+import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
 
 import 'package:ai_chatter/locator.dart';
 import 'package:flutter/material.dart';

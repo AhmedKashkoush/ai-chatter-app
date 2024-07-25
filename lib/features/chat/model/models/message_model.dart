@@ -1,11 +1,13 @@
 class MessageModel {
-  final String message;
-  final bool isMe;
+  final String message, prompt;
+  final bool isMe, hasError;
   final DateTime time;
   const MessageModel({
     required this.message,
     required this.isMe,
     required this.time,
+    this.prompt = '',
+    this.hasError = false,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {

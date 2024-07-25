@@ -4,10 +4,11 @@ import 'package:ai_chatter/features/chat/controller/repositories/base_chat_repos
 import 'package:ai_chatter/features/chat/controller/usecases/cache_chat_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_response_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_suggestions_usecase.dart';
+import 'package:ai_chatter/features/chat/controller/usecases/get_cached_chat_usecase.dart';
 import 'package:ai_chatter/features/chat/model/data_sources/local/chat_local_data_source.dart';
 import 'package:ai_chatter/features/chat/model/data_sources/remote/chat_remote_data_source.dart';
 import 'package:ai_chatter/features/chat/model/repositories/chat_repository.dart';
-import 'package:ai_chatter/features/chat/view/logic/chat_cubit.dart';
+import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,6 +74,11 @@ void _initUseCases() {
       locator(),
     ),
   );
+  locator.registerLazySingleton<GetCachedChatUseCase>(
+    () => GetCachedChatUseCase(
+      locator(),
+    ),
+  );
 }
 
 void _initCubits() {
@@ -83,6 +89,7 @@ void _initCubits() {
   );
   locator.registerFactory<ChatCubit>(
     () => ChatCubit(
+      locator(),
       locator(),
       locator(),
       locator(),

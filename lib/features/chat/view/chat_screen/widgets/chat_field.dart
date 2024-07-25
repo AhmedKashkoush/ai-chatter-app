@@ -1,7 +1,7 @@
 import 'package:ai_chatter/core/enums/request_state.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
-import 'package:ai_chatter/features/chat/view/logic/chat_cubit.dart';
+import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,7 +43,7 @@ class _ChatFieldState extends State<ChatField> {
         maxLines: 4,
         decoration: InputDecoration(
           filled: true,
-          fillColor: context.colorScheme.onBackground.withOpacity(0.3),
+          fillColor: context.colorScheme.onBackground.withOpacity(0.2),
           suffixIconColor: context.colorScheme.primary,
           suffixIcon: IconButton(
             onPressed: _canSend ? widget.onSend : null,

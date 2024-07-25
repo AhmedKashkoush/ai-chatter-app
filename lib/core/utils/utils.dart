@@ -7,10 +7,14 @@ class AppUtils {
     GenerativeModel model,
     String prompt,
   ) async {
-    final List<Content> content = [Content.text(prompt)];
-    final GenerateContentResponse response =
-        await model.generateContent(content);
-    return response;
+    try {
+      final List<Content> content = [Content.text(prompt)];
+      final GenerateContentResponse response =
+          await model.generateContent(content);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   static void copy(String text) {
