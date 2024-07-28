@@ -84,4 +84,18 @@ class ChatRepository implements BaseChatRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> clearChatHistory() async {
+    try {
+      await localDataSource.clearChatHistory();
+      return const Right(unit);
+    } on CacheException catch (e) {
+      return Left(
+        CacheFailure(
+          message: e.message,
+        ),
+      );
+    }
+  }
 }

@@ -67,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (keyboardShown != _keyboardShown) {
       _keyboardShown = keyboardShown;
       if (_keyboardShown) {
-        _scrollToBottom(false);
+        _scrollToBottom(animate: false);
       }
     }
     super.didChangeMetrics();
@@ -96,9 +96,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () => _goToSettings(context),
-            icon: const Icon(CupertinoIcons.settings),
+          BlocBuilder<ChatCubit, ChatState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: state.requestState == RequestState.loading
+                    ? null
+                    : () => _goToSettings(context),
+                icon: const Icon(CupertinoIcons.settings),
+              );
+            },
           ),
         ],
       ),
@@ -112,12 +118,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
+              flex: 5,
               child: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
+                  if (state.cacheLoaded) {
+                    _scrollToBottom(force: true);
+                    return;
+                  }
+                  // _scrollToBottom();
                   switch (state.requestState) {
-                    case RequestState.initial:
-                      _forceToScrollToBottom();
-                      break;
                     case RequestState.success:
                     case RequestState.loading:
                     case RequestState.failure:
@@ -136,6 +145,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     children: [
                       ListView.separated(
                         controller: _scrollController,
+                        cacheExtent: state.messages.length * 0.5,
                         itemCount: state.requestState == RequestState.loading
                             ? state.messages.length + 1
                             : state.messages.length,
@@ -153,7 +163,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         bottom: 8,
                         child: ScrollToBottomButton(
                           showScrollButton: _showScrollButton,
-                          onPressed: _forceToScrollToBottom,
+                          onPressed: () => _scrollToBottom(force: true),
                         ),
                       ),
                     ],
@@ -161,9 +171,39 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 },
               ),
             ),
+            BlocConsumer<ChatCubit, ChatState>(
+              listener: (context, state) {
+                if (state.suggestions.isNotEmpty) {
+                  _scrollToBottom();
+                }
+              },
+              builder: (context, state) {
+                if (state.suggestions.isEmpty) return const SizedBox.shrink();
+                return SizedBox(
+                  height: 64,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(12),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return OutlinedButton(
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          _messageController.text = state.suggestions[index];
+                        },
+                        child: Text(
+                          state.suggestions[index],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) => 10.w,
+                    itemCount: state.suggestions.length,
+                  ),
+                );
+              },
+            ),
             ChatField(
               controller: _messageController,
-              onSend: () => _onSend(context),
+              onSend: () => _onSend(context, _messageController.text),
             )
           ],
         ),
@@ -171,57 +211,59 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     );
   }
 
-  void _forceToScrollToBottom() {
+  // void _forceToScrollToBottom() {
+  //   if (!_scrollController.hasClients) {
+  //     return;
+  //   }
+  //   if ((_scrollController.position.maxScrollExtent - _limit) -
+  //           _scrollController.position.pixels <
+  //       800) {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: const Duration(milliseconds: 300),
+  //       curve: Curves.fastEaseInToSlowEaseOut,
+  //     );
+  //   } else {
+  //     _scrollController.jumpTo(
+  //       _scrollController.position.maxScrollExtent,
+  //     );
+  //   }
+  // }
+
+  void _scrollToBottom({bool animate = true, force = false}) async {
     if (!_scrollController.hasClients) {
       return;
     }
-    if ((_scrollController.position.maxScrollExtent - _limit) -
-            _scrollController.position.pixels <
-        800) {
+    if (!force) {
+      await Future.delayed(const Duration(milliseconds: 400));
+    }
+    if (_showScrollButton.value && !force) {
+      return;
+    }
+    if (!animate) {
+      _scrollController.jumpTo(
+        _scrollController.position.maxScrollExtent,
+      );
+    } else {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
         curve: Curves.fastEaseInToSlowEaseOut,
       );
-    } else {
-      _scrollController.jumpTo(
-        _scrollController.position.maxScrollExtent,
-      );
     }
   }
 
-  void _scrollToBottom([bool animate = true]) {
-    Future.delayed(const Duration(milliseconds: 400), () {
-      if (!_scrollController.hasClients) {
-        return;
-      }
-      if (_showScrollButton.value) {
-        return;
-      }
-      if (!animate) {
-        _scrollController.jumpTo(
-          _scrollController.position.maxScrollExtent,
-        );
-      } else {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.fastEaseInToSlowEaseOut,
-        );
-      }
-    });
-  }
-
-  void _onSend(BuildContext context) {
+  void _onSend(BuildContext context, String message) {
     context.read<ChatCubit>().sendMessage(
           MessageModel(
-            message: _messageController.text,
+            message: message.trim(),
             isMe: true,
             time: DateTime.now(),
           ),
         );
+
+    _scrollToBottom(force: true);
     _messageController.clear();
-    _forceToScrollToBottom();
   }
 
   void _goToSettings(BuildContext context) {

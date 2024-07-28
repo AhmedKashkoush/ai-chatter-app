@@ -2,6 +2,7 @@ import 'package:ai_chatter/config/themes/theme_cubit.dart';
 import 'package:ai_chatter/core/utils/constants.dart';
 import 'package:ai_chatter/features/chat/controller/repositories/base_chat_repository.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/cache_chat_usecase.dart';
+import 'package:ai_chatter/features/chat/controller/usecases/clear_chat_history_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_response_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_suggestions_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/get_cached_chat_usecase.dart';
@@ -9,6 +10,7 @@ import 'package:ai_chatter/features/chat/model/data_sources/local/chat_local_dat
 import 'package:ai_chatter/features/chat/model/data_sources/remote/chat_remote_data_source.dart';
 import 'package:ai_chatter/features/chat/model/repositories/chat_repository.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +56,7 @@ void _initLocal() {
 
 void _initRemote() {
   locator.registerLazySingleton<BaseChatRemoteDataSource>(
-    () => ChatRemoteDataSource(locator()),
+    () => ChatRemoteDataSource(locator(), locator(), locator()),
   );
 }
 
@@ -79,6 +81,11 @@ void _initUseCases() {
       locator(),
     ),
   );
+  locator.registerLazySingleton<ClearChatHistoryUseCase>(
+    () => ClearChatHistoryUseCase(
+      locator(),
+    ),
+  );
 }
 
 void _initCubits() {
@@ -93,6 +100,7 @@ void _initCubits() {
       locator(),
       locator(),
       locator(),
+      locator(),
     ),
   );
 }
@@ -103,6 +111,9 @@ void _initExternal() {
       model: AppConstants.modelName,
       apiKey: AppConstants.apiKey,
     ),
+  );
+  locator.registerLazySingleton<Connectivity>(
+    () => Connectivity(),
   );
   locator.registerLazySingletonAsync<SharedPreferences>(
     () => SharedPreferences.getInstance(),

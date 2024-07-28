@@ -10,4 +10,5 @@ abstract class BaseChatRepository {
       String response);
   Future<Either<Failure, Unit>> cacheChat(List<MessageModel> messages);
   Either<Failure, List<MessageModel>> getCachedChat();
+  Future<Either<Failure, Unit>> clearChatHistory();
 }

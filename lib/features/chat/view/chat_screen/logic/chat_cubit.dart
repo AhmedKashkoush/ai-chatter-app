@@ -1,6 +1,7 @@
 import 'package:ai_chatter/core/enums/request_state.dart';
 import 'package:ai_chatter/core/errors/failures.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/cache_chat_usecase.dart';
+import 'package:ai_chatter/features/chat/controller/usecases/clear_chat_history_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_response_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/generate_suggestions_usecase.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/get_cached_chat_usecase.dart';
@@ -16,16 +17,42 @@ class ChatCubit extends Cubit<ChatState> {
   final GenerateSuggestionsUseCase generateSuggestionsUseCase;
   final CacheChatUseCase cacheChatUseCase;
   final GetCachedChatUseCase getCachedChatUseCase;
+  final ClearChatHistoryUseCase clearChatHistoryUseCase;
   ChatCubit(
     this.generateResponseUseCase,
     this.generateSuggestionsUseCase,
     this.cacheChatUseCase,
     this.getCachedChatUseCase,
+    this.clearChatHistoryUseCase,
   ) : super(
           const ChatState(
             requestState: RequestState.initial,
           ),
         );
+
+  void clearChatHistory() async {
+    final Either<Failure, Unit> result = await clearChatHistoryUseCase();
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          requestState: RequestState.failure,
+          error: failure.message,
+        ),
+      ),
+      (_) => emit(
+        state.copyWith(
+            requestState: RequestState.success, messages: [], suggestions: []),
+      ),
+    );
+  }
+
+  void clearSuggestions() {
+    emit(
+      state.copyWith(
+        suggestions: [],
+      ),
+    );
+  }
 
   void getCachedMessages() {
     final Either<Failure, List<MessageModel>> result = getCachedChatUseCase();
@@ -36,6 +63,7 @@ class ChatCubit extends Cubit<ChatState> {
       (messages) => emit(
         state.copyWith(
           messages: messages,
+          cacheLoaded: true,
         ),
       ),
     );
@@ -45,6 +73,16 @@ class ChatCubit extends Cubit<ChatState> {
     emit(
       state.copyWith(
         messages: [...state.messages, message],
+        suggestions: [],
+      ),
+    );
+    await Future.delayed(
+      const Duration(
+        milliseconds: 600,
+      ),
+    );
+    emit(
+      state.copyWith(
         requestState: RequestState.loading,
       ),
     );
@@ -72,7 +110,7 @@ class ChatCubit extends Cubit<ChatState> {
           ),
         );
       },
-      (response) {
+      (response) async {
         emit(
           state.copyWith(
             messages: [
@@ -86,9 +124,21 @@ class ChatCubit extends Cubit<ChatState> {
             requestState: RequestState.success,
           ),
         );
+        _generateSuggestions(response);
       },
     );
     _cacheChat();
+  }
+
+  Future<void> _generateSuggestions(GenerateContentResponse response) async {
+    Either<Failure, List<String>> result =
+        await generateSuggestionsUseCase(response.text!);
+    result.fold(
+      (l) => null,
+      (suggestions) => emit(
+        state.copyWith(suggestions: suggestions),
+      ),
+    );
   }
 
   void deleteMessage(MessageModel messageToDelete) {

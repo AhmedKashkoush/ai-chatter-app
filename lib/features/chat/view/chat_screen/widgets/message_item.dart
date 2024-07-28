@@ -4,6 +4,7 @@ import 'package:ai_chatter/core/extensions/popup_extension.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:ai_chatter/core/utils/images.dart';
+import 'package:ai_chatter/core/utils/strings.dart';
 
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:ai_chatter/features/chat/model/models/message_model.dart';
@@ -90,7 +91,7 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.copy),
               10.w,
-              const Text('Copy'),
+              const Text(AppStrings.copy),
             ],
           ),
         ),
@@ -101,7 +102,7 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.select_all),
               10.w,
-              const Text('Select'),
+              const Text(AppStrings.select),
             ],
           ),
         ),
@@ -112,7 +113,7 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.share),
               10.w,
-              const Text('Share'),
+              const Text(AppStrings.share),
             ],
           ),
         ),
@@ -123,21 +124,19 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.loop),
               10.w,
-              const Text('Regenerate'),
+              const Text(AppStrings.regenerate),
             ],
           ),
         ),
       const PopupMenuDivider(),
       PopupMenuItem(
-        onTap: () {
-          _onDelete(context);
-        },
+        onTap: () => _onDelete(context),
         child: Row(
           children: [
             const Icon(Icons.delete, color: Colors.red),
             10.w,
             const Text(
-              'Delete',
+              AppStrings.delete,
               style: TextStyle(color: Colors.red),
             ),
           ],
@@ -159,7 +158,7 @@ class _MessageItemState extends State<MessageItem> {
     AppUtils.copy(widget.message.message);
 
     context.showSnackBar(
-      message: 'Copied to clipboard',
+      message: AppStrings.copiedToClipboard,
       icon: Icons.copy,
     );
   }
@@ -169,16 +168,21 @@ class _MessageItemState extends State<MessageItem> {
   }
 
   void _onDelete(BuildContext context) async {
-    await context.showConfirmDialog(
-        message: 'Are you sure you want to delete this message?',
+    context.showConfirmDialog(
+        message: AppStrings.confirmToDeleteMessage,
         actions: [
           TextButton(
             onPressed: () => context.pop(),
-            child: const Text('No'),
+            child: const Text(AppStrings.no),
           ),
           TextButton(
             onPressed: () => context.pop(true),
-            child: const Text('Yes'),
+            child: const Text(
+              AppStrings.yes,
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
           ),
         ]).then(
       (confirm) {
@@ -198,7 +202,7 @@ class _MessageItemState extends State<MessageItem> {
           children: [
             const Icon(Icons.copy),
             10.w,
-            const Text('Copy'),
+            const Text(AppStrings.copy),
           ],
         ),
       ),
@@ -209,7 +213,7 @@ class _MessageItemState extends State<MessageItem> {
           children: [
             const Icon(Icons.select_all),
             10.w,
-            const Text('Select'),
+            const Text(AppStrings.select),
           ],
         ),
       ),

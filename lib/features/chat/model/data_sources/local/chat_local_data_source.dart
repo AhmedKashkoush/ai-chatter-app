@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:ai_chatter/core/errors/exceptions.dart';
 import 'package:ai_chatter/core/utils/keys.dart';
+import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/features/chat/model/models/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseChatLocalDataSource {
   Future<void> cacheChat(List<MessageModel> messages);
   List<MessageModel> getCachedChat();
+  Future<void> clearChatHistory();
 }
 
 class ChatLocalDataSource implements BaseChatLocalDataSource {
@@ -27,7 +29,9 @@ class ChatLocalDataSource implements BaseChatLocalDataSource {
   @override
   List<MessageModel> getCachedChat() {
     final String data = prefs.getString(AppKeys.chat) ?? '';
-    if (data.isEmpty) throw const CacheException(message: 'Empty cache');
+    if (data.isEmpty) {
+      throw const CacheException(message: AppStrings.emptyCache);
+    }
     List decodedList = jsonDecode(data) as List;
     List<MessageModel> messages = decodedList
         .map(
@@ -35,5 +39,14 @@ class ChatLocalDataSource implements BaseChatLocalDataSource {
         )
         .toList();
     return messages;
+  }
+
+  @override
+  Future<void> clearChatHistory() async {
+    if (!prefs.containsKey(AppKeys.chat)) {
+      throw const CacheException(message: AppStrings.emptyCache);
+    }
+    final bool removed = await prefs.remove(AppKeys.chat);
+    if (!removed) throw const CacheException(message: AppStrings.emptyCache);
   }
 }

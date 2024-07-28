@@ -5,6 +5,7 @@ import 'package:ai_chatter/core/utils/constants.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
 
 import 'package:ai_chatter/locator.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,6 +32,9 @@ class AiChatterApp extends StatelessWidget {
           themeMode: context.read<ThemeCubit>().themeMode,
           initialRoute: AppRouter.initialRoute,
           onGenerateRoute: AppRouter.onGenerateRoute,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.savedLocale ?? context.deviceLocale,
         );
       }),
     );

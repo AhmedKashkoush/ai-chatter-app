@@ -28,9 +28,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  chat_bubbles: ^1.6.0
+  chat_bubbles: ^1.5.0
+  connectivity_plus: ^6.0.3
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
+  easy_localization: ^3.0.7
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
@@ -76,6 +78,7 @@ flutter:
     - .env
     - assets/lotties/
     - assets/images/
+    - assets/translations/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
