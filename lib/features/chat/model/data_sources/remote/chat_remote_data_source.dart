@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:ai_chatter/core/errors/exceptions.dart' as ex;
 import 'package:ai_chatter/core/utils/constants.dart';
-import 'package:ai_chatter/core/utils/keys.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -33,16 +30,11 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
 
   @override
   Future<List<String>> generateSuggestionsFrom(String response) async {
-    bool suggestionsEnabled = prefs.getBool(AppKeys.suggestions) ?? true;
-    if (!suggestionsEnabled) return [];
     final GenerateContentResponse data = await AppUtils.generateResponse(
       model,
       AppConstants.suggestionsPrompt(response),
     );
-    final List<String> suggestions =
-        data.text?.split(',').map((suggestion) => suggestion.trim()).toList() ??
-            [];
-    log(suggestions.toString());
+    final List<String> suggestions = data.text?.split(',') ?? [];
     return suggestions;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:ai_chatter/config/other/chat_settings.dart';
 import 'package:ai_chatter/core/enums/request_state.dart';
 import 'package:ai_chatter/core/errors/failures.dart';
 import 'package:ai_chatter/features/chat/controller/usecases/cache_chat_usecase.dart';
@@ -54,18 +55,23 @@ class ChatCubit extends Cubit<ChatState> {
     );
   }
 
-  void getCachedMessages() {
+  void getCachedMessages() async {
+    await Future.delayed(const Duration(milliseconds: 500));
     final Either<Failure, List<MessageModel>> result = getCachedChatUseCase();
     result.fold(
       (failure) => state.copyWith(
         messages: [],
       ),
-      (messages) => emit(
-        state.copyWith(
-          messages: messages,
-          cacheLoaded: true,
-        ),
-      ),
+      (messages) {
+        emit(
+          state.copyWith(
+            messages: messages,
+            cacheLoaded: true,
+          ),
+        );
+        if (state.messages.last.isMe) return;
+        _generateSuggestions(state.messages.last.message);
+      },
     );
   }
 
@@ -124,15 +130,16 @@ class ChatCubit extends Cubit<ChatState> {
             requestState: RequestState.success,
           ),
         );
-        _generateSuggestions(response);
+        _generateSuggestions(response.text!);
       },
     );
     _cacheChat();
   }
 
-  Future<void> _generateSuggestions(GenerateContentResponse response) async {
+  Future<void> _generateSuggestions(String response) async {
+    if (!ChatSettings.suggestionsEnabled) return;
     Either<Failure, List<String>> result =
-        await generateSuggestionsUseCase(response.text!);
+        await generateSuggestionsUseCase(response);
     result.fold(
       (l) => null,
       (suggestions) => emit(

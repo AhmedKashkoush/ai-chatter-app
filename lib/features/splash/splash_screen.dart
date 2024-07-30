@@ -1,9 +1,10 @@
 import 'dart:async';
+
 import 'package:ai_chatter/config/routes/routes.dart';
 import 'package:ai_chatter/core/extensions/navigation_extension.dart';
-import 'package:ai_chatter/core/utils/constants.dart';
+
 import 'package:ai_chatter/core/utils/keys.dart';
-import 'package:ai_chatter/core/utils/utils.dart';
+
 import 'package:ai_chatter/core/widgets/app_logo.dart';
 import 'package:ai_chatter/locator.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   FutureOr<void> _initialize() async {
     final SharedPreferences prefs = locator<SharedPreferences>();
     if (prefs.getBool(AppKeys.passedIntro) ?? false) {
-      AppUtils.generateResponse(locator(), AppConstants.initialPrompt).then(
-        (_) => context.pushReplacementNamed(AppRoutes.home),
-      );
+      context.pushReplacementNamed(AppRoutes.home);
     } else {
       context.pushReplacementNamed(AppRoutes.intro);
     }

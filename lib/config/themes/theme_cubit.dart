@@ -10,6 +10,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
   ThemeMode get themeMode {
     String mode = prefs.getString(AppKeys.theme) ?? 'system';
     ThemeMode themeMode = ThemeMode.values.byName(mode);
+    emit(themeMode);
     return themeMode;
   }
 

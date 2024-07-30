@@ -2,6 +2,7 @@ import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:ai_chatter/core/utils/images.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class StartChatWidget extends StatelessWidget {
@@ -21,7 +22,7 @@ class StartChatWidget extends StatelessWidget {
           ),
           10.h,
           Text(
-            AppStrings.whatIsOnYourMind,
+            context.tr(AppStrings.whatIsOnYourMind),
             style: context.textTheme.bodyLarge,
           ),
         ],

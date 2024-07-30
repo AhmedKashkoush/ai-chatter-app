@@ -5,6 +5,7 @@ import 'package:ai_chatter/core/utils/strings.dart';
 
 import 'package:ai_chatter/core/widgets/custom_elevated_button.dart';
 import 'package:ai_chatter/locator.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +16,7 @@ class StartChattingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomElevatedButton(
       onPressed: () => _startChatting(context),
-      text: AppStrings.startChatting,
+      text: context.tr(AppStrings.startChatting),
     );
   }
 

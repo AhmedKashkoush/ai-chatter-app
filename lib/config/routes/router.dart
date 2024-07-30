@@ -1,6 +1,7 @@
 import 'package:ai_chatter/config/routes/routes.dart';
 
 import 'package:ai_chatter/core/widgets/error_screen.dart';
+import 'package:ai_chatter/features/about/about_screen.dart';
 import 'package:ai_chatter/features/chat/model/models/message_model.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/chat_screen.dart';
 import 'package:ai_chatter/features/chat/view/select_screen/select_screen.dart';
@@ -35,6 +36,10 @@ class AppRouter {
       case AppRoutes.settings:
         return MaterialPageRoute(
           builder: (_) => const SettingsScreen(),
+        );
+      case AppRoutes.about:
+        return MaterialPageRoute(
+          builder: (_) => const AboutScreen(),
         );
       default:
         return MaterialPageRoute(

@@ -24,19 +24,9 @@ class _IntroductionScreenLandscape extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  AppStrings.introTitle,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.titleLarge,
-                ),
+                const IntroTitle(),
                 10.h,
-                Text(
-                  AppStrings.introBody,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
-                ),
+                const IntroBody(),
                 40.h,
                 const StartChattingButton(),
               ],

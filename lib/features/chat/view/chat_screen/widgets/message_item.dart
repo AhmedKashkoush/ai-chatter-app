@@ -1,4 +1,5 @@
 import 'package:ai_chatter/config/routes/routes.dart';
+import 'package:ai_chatter/core/extensions/media_query_extension.dart';
 import 'package:ai_chatter/core/extensions/navigation_extension.dart';
 import 'package:ai_chatter/core/extensions/popup_extension.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
@@ -9,16 +10,18 @@ import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:ai_chatter/features/chat/model/models/message_model.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
-import 'package:chat_bubbles/bubbles/bubble_special_one.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageItem extends StatefulWidget {
   final MessageModel message;
+  final bool canSelect;
   const MessageItem({
     super.key,
     required this.message,
+    this.canSelect = false,
   });
 
   @override
@@ -26,59 +29,22 @@ class MessageItem extends StatefulWidget {
 }
 
 class _MessageItemState extends State<MessageItem> {
-  final GlobalKey<PopupMenuButtonState> _key =
-      GlobalKey<PopupMenuButtonState>();
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () {
-        HapticFeedback.vibrate();
-        _key.currentState!.showButtonMenu();
-      },
-      child: PopupMenuButton(
-        key: _key,
-        enableFeedback: false,
-        position: PopupMenuPosition.under,
-        offset: const Offset(1, 2),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-        ),
-        itemBuilder: (context) =>
-            widget.message.isMe ? _userOptions(context) : _aiOptions(context),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: widget.message.isMe
-              ? MainAxisAlignment.end
-              : MainAxisAlignment.start,
-          children: [
-            if (!widget.message.isMe) ...[
-              Image.asset(
-                Images.appLogo,
-                width: 40,
-              ),
-              5.w,
-            ],
-            BubbleSpecialOne(
-              text: widget.message.message,
-              isSender: widget.message.isMe,
-              textStyle: TextStyle(
-                color: widget.message.isMe
-                    ? context.colorScheme.background
-                    : widget.message.hasError
-                        ? Colors.red
-                        : null,
-              ),
-              tail: true,
-              color: widget.message.isMe
-                  ? context.colorScheme.primary
-                  : context.colorScheme.onBackground.withOpacity(0.2),
-            ),
-          ],
-        ),
-      ),
-    );
+    return widget.canSelect
+        ? _MessageBody(widget: widget)
+        : GestureDetector(
+            onLongPress: () {
+              HapticFeedback.vibrate();
+              context.showMessageMenu(
+                isMe: widget.message.isMe,
+                items: widget.message.isMe
+                    ? _userOptions(context)
+                    : _aiOptions(context),
+              );
+            },
+            child: _MessageBody(widget: widget),
+          );
   }
 
   List<PopupMenuEntry<PopupMenuEntry<dynamic>>> _aiOptions(
@@ -91,7 +57,7 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.copy),
               10.w,
-              const Text(AppStrings.copy),
+              Text(context.tr(AppStrings.copy)),
             ],
           ),
         ),
@@ -102,7 +68,9 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.select_all),
               10.w,
-              const Text(AppStrings.select),
+              Text(
+                context.tr(AppStrings.select),
+              ),
             ],
           ),
         ),
@@ -113,7 +81,9 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.share),
               10.w,
-              const Text(AppStrings.share),
+              Text(
+                context.tr(AppStrings.share),
+              ),
             ],
           ),
         ),
@@ -124,7 +94,9 @@ class _MessageItemState extends State<MessageItem> {
             children: [
               const Icon(Icons.loop),
               10.w,
-              const Text(AppStrings.regenerate),
+              Text(
+                context.tr(AppStrings.regenerate),
+              ),
             ],
           ),
         ),
@@ -135,9 +107,9 @@ class _MessageItemState extends State<MessageItem> {
           children: [
             const Icon(Icons.delete, color: Colors.red),
             10.w,
-            const Text(
-              AppStrings.delete,
-              style: TextStyle(color: Colors.red),
+            Text(
+              context.tr(AppStrings.delete),
+              style: const TextStyle(color: Colors.red),
             ),
           ],
         ),
@@ -158,7 +130,7 @@ class _MessageItemState extends State<MessageItem> {
     AppUtils.copy(widget.message.message);
 
     context.showSnackBar(
-      message: AppStrings.copiedToClipboard,
+      message: context.tr(AppStrings.copiedToClipboard),
       icon: Icons.copy,
     );
   }
@@ -169,17 +141,19 @@ class _MessageItemState extends State<MessageItem> {
 
   void _onDelete(BuildContext context) async {
     context.showConfirmDialog(
-        message: AppStrings.confirmToDeleteMessage,
+        message: context.tr(AppStrings.confirmToDeleteMessage),
         actions: [
           TextButton(
             onPressed: () => context.pop(),
-            child: const Text(AppStrings.no),
+            child: Text(
+              context.tr(AppStrings.no),
+            ),
           ),
           TextButton(
             onPressed: () => context.pop(true),
-            child: const Text(
-              AppStrings.yes,
-              style: TextStyle(
+            child: Text(
+              context.tr(AppStrings.yes),
+              style: const TextStyle(
                 color: Colors.red,
               ),
             ),
@@ -202,7 +176,9 @@ class _MessageItemState extends State<MessageItem> {
           children: [
             const Icon(Icons.copy),
             10.w,
-            const Text(AppStrings.copy),
+            Text(
+              context.tr(AppStrings.copy),
+            ),
           ],
         ),
       ),
@@ -213,7 +189,9 @@ class _MessageItemState extends State<MessageItem> {
           children: [
             const Icon(Icons.select_all),
             10.w,
-            const Text(AppStrings.select),
+            Text(
+              context.tr(AppStrings.select),
+            ),
           ],
         ),
       ),
@@ -222,5 +200,67 @@ class _MessageItemState extends State<MessageItem> {
 
   void _onSelect(BuildContext context) {
     context.pushNamed(AppRoutes.select, arguments: widget.message);
+  }
+}
+
+class _MessageBody extends StatelessWidget {
+  const _MessageBody({
+    required this.widget,
+  });
+
+  final MessageItem widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment:
+          widget.message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        if (!widget.message.isMe) ...[
+          Image.asset(
+            Images.appLogo,
+            width: 40,
+          ),
+          5.w,
+        ],
+        Container(
+          padding: const EdgeInsets.all(8),
+          constraints: BoxConstraints(
+            maxWidth: context.screenWidth * 0.8,
+            // minWidth: context.screenWidth * 0.1,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
+            color: widget.message.isMe
+                ? context.colorScheme.primary
+                : context.colorScheme.onBackground.withOpacity(0.2),
+          ),
+          child: widget.canSelect
+              ? SelectableText(
+                  widget.message.message,
+                  style: TextStyle(
+                    color: widget.message.isMe
+                        ? context.colorScheme.background
+                        : widget.message.hasError
+                            ? Colors.red
+                            : null,
+                  ),
+                )
+              : Text(
+                  widget.message.message,
+                  style: TextStyle(
+                    color: widget.message.isMe
+                        ? context.colorScheme.background
+                        : widget.message.hasError
+                            ? Colors.red
+                            : null,
+                  ),
+                ),
+        ),
+      ],
+    );
   }
 }

@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:ai_chatter/core/errors/exceptions.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class AppUtils {
@@ -34,5 +40,24 @@ class AppUtils {
 
   static void share(String text) {
     Share.share(text);
+  }
+
+  static Future<String> _saveUserFeedback(Uint8List screenshot) async {
+    final Directory directory = await getTemporaryDirectory();
+    final File file = File('${directory.path}/screenshot.png');
+    await file.writeAsBytes(screenshot);
+    return file.path;
+  }
+
+  static Future<void> sendUserFeedback(UserFeedback feedback) async {
+    final String screenshotPath = await _saveUserFeedback(feedback.screenshot);
+    final Email email = Email(
+      subject: 'Ai Chatter Feedback',
+      recipients: [dotenv.env['SUPPORT_EMAIL']!],
+      attachmentPaths: [screenshotPath],
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
   }
 }
