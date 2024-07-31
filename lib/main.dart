@@ -21,7 +21,7 @@ void main() async {
           value: locator<ThemeCubit>(),
         ),
         BlocProvider.value(
-          value: locator<ChatCubit>(),
+          value: locator<ChatCubit>()..getCachedMessages(),
         ),
       ],
       child: EasyLocalization(

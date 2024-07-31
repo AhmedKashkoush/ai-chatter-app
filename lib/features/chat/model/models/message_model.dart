@@ -14,7 +14,11 @@ class MessageModel {
     return MessageModel(
       message: json['message'],
       isMe: json['isMe'],
-      time: DateTime.parse(json['time']),
+      time: DateTime.parse(
+        json['time'],
+      ),
+      prompt: json['prompt'],
+      hasError: json['hasError'],
     );
   }
 
@@ -22,5 +26,7 @@ class MessageModel {
         'message': message,
         'isMe': isMe,
         'time': time.toIso8601String(),
+        'prompt': prompt,
+        'hasError': hasError,
       };
 }

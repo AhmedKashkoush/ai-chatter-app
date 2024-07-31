@@ -37,8 +37,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   bool _keyboardShown = false;
 
-  // final int _limit = 100;
-
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -51,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (!context.mounted) return;
     if (_scrollController.isAttached) {
       _showScrollButton.value =
-          _scrollPositionsListener.itemPositions.value.last.index !=
+          _scrollPositionsListener.itemPositions.value.last.index <
               context.read<ChatCubit>().state.messages.length - 1;
     }
   }
@@ -60,14 +58,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final double bottomInsets = View.of(context).viewInsets.bottom;
     final bool keyboardShown = bottomInsets > 0;
-
-    // if (_scrollPositionsListener.itemPositions.value.last.index >=
-    //     context.read<ChatCubit>().state.messages.length - 1) {
-    //   _showScrollButton.value = false;
-    // }
-    _scrollListener();
     if (keyboardShown != _keyboardShown) {
       _keyboardShown = keyboardShown;
+      _scrollListener();
       if (_keyboardShown) {
         _scrollToBottom(force: !_showScrollButton.value, animate: false);
       }
@@ -123,18 +116,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               flex: 5,
               child: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
-                  if (state.cacheLoaded) {
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      _scrollToBottom(force: true, animate: false);
-                    });
-                    return;
-                  }
-
                   if (state.requestState != RequestState.initial) {
-                    _scrollToBottom(
-                      force: !_showScrollButton.value,
-                      loading: state.requestState == RequestState.loading,
-                    );
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      _scrollToBottom(
+                        force: !_showScrollButton.value,
+                        loading: state.requestState == RequestState.loading,
+                      );
+                    });
                   }
                 },
                 builder: (context, state) {
@@ -149,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         itemScrollController: _scrollController,
                         itemPositionsListener: _scrollPositionsListener,
                         minCacheExtent: 1000,
+                        initialScrollIndex: state.messages.length - 1,
                         itemCount: state.requestState == RequestState.loading
                             ? state.messages.length + 1
                             : state.messages.length,
@@ -224,9 +213,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (!_scrollController.isAttached) {
       return;
     }
-    // if (!force) {
-    //   await Future.delayed(const Duration(milliseconds: 400));
-    // }
     if (!force) {
       return;
     }
@@ -258,8 +244,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             time: DateTime.now(),
           ),
         );
-
-    _scrollToBottom(force: true);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollToBottom(force: true);
+    });
     _messageController.clear();
   }
 

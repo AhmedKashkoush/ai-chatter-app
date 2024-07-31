@@ -56,7 +56,7 @@ void _initLocal() {
 
 void _initRemote() {
   locator.registerLazySingleton<BaseChatRemoteDataSource>(
-    () => ChatRemoteDataSource(locator(), locator(), locator()),
+    () => ChatRemoteDataSource(locator(), locator(), locator(), locator()),
   );
 }
 
@@ -111,6 +111,10 @@ void _initExternal() {
       model: AppConstants.modelName,
       apiKey: AppConstants.apiKey,
     ),
+  );
+  final ChatSession chat = locator<GenerativeModel>().startChat();
+  locator.registerLazySingleton<ChatSession>(
+    () => chat,
   );
   locator.registerLazySingleton<Connectivity>(
     () => Connectivity(),

@@ -8,6 +8,8 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'config/locales/locale_settings.dart';
+
 class AiChatterApp extends StatelessWidget {
   const AiChatterApp({super.key});
 
@@ -36,7 +38,9 @@ class AiChatterApp extends StatelessWidget {
           onGenerateRoute: AppRouter.onGenerateRoute,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
-          locale: context.locale,
+          locale: LocaleSettings.useSystemLocale
+              ? context.deviceLocale
+              : context.locale,
         );
       }),
     );

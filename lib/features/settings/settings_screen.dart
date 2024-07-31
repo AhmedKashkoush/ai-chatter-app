@@ -1,3 +1,4 @@
+import 'package:ai_chatter/config/locales/locale_settings.dart';
 import 'package:ai_chatter/config/locales/locales.dart';
 import 'package:ai_chatter/config/other/chat_settings.dart';
 import 'package:ai_chatter/config/routes/routes.dart';
@@ -7,32 +8,37 @@ import 'package:ai_chatter/core/extensions/popup_extension.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
 import 'package:ai_chatter/core/utils/constants.dart';
-import 'package:ai_chatter/core/utils/keys.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
-import 'package:ai_chatter/locator.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({
+    super.key,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final ValueNotifier<bool> _suggestionsEnabled = ValueNotifier<bool>(
-        locator<SharedPreferences>().getBool(AppKeys.suggestions) ?? true,
-      ),
-      _useSystemLocale = ValueNotifier<bool>(
-        locator<SharedPreferences>().getBool(AppKeys.useSystemLocale) ?? true,
-      );
+  late final ValueNotifier<bool> _suggestionsEnabled, _useSystemLocale;
+
+  @override
+  void initState() {
+    _suggestionsEnabled = ValueNotifier<bool>(
+      ChatSettings.suggestionsEnabled,
+    );
+    _useSystemLocale = ValueNotifier<bool>(
+      LocaleSettings.useSystemLocale,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +137,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
-          )
+          ),
+          12.h,
         ],
       ),
     );
@@ -150,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         message: context.tr(AppStrings.confirmToClearHistory),
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
+            onPressed: () => context.pop(false),
             child: Text(
               context.tr(AppStrings.no),
             ),
@@ -287,9 +294,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showLocaleDialog(BuildContext context) {
     ValueNotifier<String> locale = ValueNotifier<String>(
-      locator<SharedPreferences>().getBool(AppKeys.useSystemLocale) ?? true
-          ? 'system'
-          : context.locale.languageCode,
+      LocaleSettings.useSystemLocale ? 'system' : context.locale.languageCode,
     );
     context.showDialog<String>(
       content: ValueListenableBuilder(
@@ -319,14 +324,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (locale != null) {
         if (locale == 'system') {
           context.resetLocale();
-          await locator<SharedPreferences>()
-              .setBool(AppKeys.useSystemLocale, true);
+          await LocaleSettings.setUseSystemLocale(true);
           _useSystemLocale.value = true;
           return;
         }
         context.setLocale(Locale(locale));
-        await locator<SharedPreferences>()
-            .setBool(AppKeys.useSystemLocale, false);
+        await LocaleSettings.setUseSystemLocale(false);
         _useSystemLocale.value = false;
       }
     });

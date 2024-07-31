@@ -1,5 +1,6 @@
 import 'package:ai_chatter/core/errors/exceptions.dart';
 import 'package:ai_chatter/core/errors/failures.dart';
+import 'package:ai_chatter/core/utils/strings.dart';
 import 'package:ai_chatter/features/chat/controller/repositories/base_chat_repository.dart';
 import 'package:ai_chatter/features/chat/model/data_sources/local/chat_local_data_source.dart';
 import 'package:ai_chatter/features/chat/model/data_sources/remote/chat_remote_data_source.dart';
@@ -32,7 +33,7 @@ class ChatRepository implements BaseChatRepository {
       String message) async {
     try {
       final ai.GenerateContentResponse response =
-          await remoteDataSource.generateResponse(message);
+          await remoteDataSource.sendMessage(message);
       return Right(response);
     } on NetworkException catch (e) {
       return Left(
@@ -44,6 +45,12 @@ class ChatRepository implements BaseChatRepository {
       return Left(
         ServerFailure(
           message: e.message,
+        ),
+      );
+    } catch (e) {
+      return const Left(
+        ServerFailure(
+          message: AppStrings.responseTimeout,
         ),
       );
     }
@@ -66,6 +73,12 @@ class ChatRepository implements BaseChatRepository {
       return Left(
         ServerFailure(
           message: e.message,
+        ),
+      );
+    } catch (e) {
+      return const Left(
+        ServerFailure(
+          message: AppStrings.responseTimeout,
         ),
       );
     }

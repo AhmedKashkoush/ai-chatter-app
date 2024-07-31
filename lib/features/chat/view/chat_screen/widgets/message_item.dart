@@ -144,7 +144,7 @@ class _MessageItemState extends State<MessageItem> {
         message: context.tr(AppStrings.confirmToDeleteMessage),
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
+            onPressed: () => context.pop(false),
             child: Text(
               context.tr(AppStrings.no),
             ),
@@ -250,7 +250,9 @@ class _MessageBody extends StatelessWidget {
                   ),
                 )
               : Text(
-                  widget.message.message,
+                  widget.message.hasError
+                      ? context.tr(widget.message.message)
+                      : widget.message.message,
                   style: TextStyle(
                     color: widget.message.isMe
                         ? context.colorScheme.background

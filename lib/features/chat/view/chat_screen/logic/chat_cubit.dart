@@ -122,7 +122,7 @@ class ChatCubit extends Cubit<ChatState> {
             messages: [
               ...state.messages,
               MessageModel(
-                message: response.text!,
+                message: response.text!.trim(),
                 isMe: false,
                 time: DateTime.now(),
               ),

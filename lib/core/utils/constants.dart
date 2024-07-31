@@ -1,9 +1,10 @@
+import 'package:ai_chatter/core/utils/env_keys.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConstants {
-  static final String apiKey = dotenv.env['API_KEY'] ?? '';
+  static final String apiKey = dotenv.env[EnvKeys.apiKey] ?? '';
   static const String modelName = 'gemini-1.5-flash-latest';
-  static const String appName = 'Ai Chatter';
+  static const String appName = 'AI Chatter';
   static const String appVersion = 'v1.0.0';
   static const String logoTag = 'logo';
   static const String myLinkedIn =

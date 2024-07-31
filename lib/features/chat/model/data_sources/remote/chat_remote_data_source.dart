@@ -8,20 +8,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseChatRemoteDataSource {
   Future<GenerateContentResponse> generateResponse(String message);
+  Future<GenerateContentResponse> sendMessage(String message);
   Future<List<String>> generateSuggestionsFrom(String response);
 }
 
 class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   final GenerativeModel model;
+  final ChatSession chat;
   final Connectivity connectivity;
   final SharedPreferences prefs;
 
-  const ChatRemoteDataSource(this.model, this.connectivity, this.prefs);
+  const ChatRemoteDataSource(
+      this.model, this.connectivity, this.prefs, this.chat);
   @override
   Future<GenerateContentResponse> generateResponse(String message) async {
     await AppUtils.checkConnectivity(connectivity);
     return await AppUtils.generateResponse(model, message).timeout(
-      const Duration(minutes: 1),
+      const Duration(seconds: 30),
+      onTimeout: () => throw const ex.ServerException(
+        message: AppStrings.responseTimeout,
+      ),
+    );
+  }
+
+  @override
+  Future<GenerateContentResponse> sendMessage(String message) async {
+    await AppUtils.checkConnectivity(connectivity);
+    return await AppUtils.sendMessage(chat, message).timeout(
+      const Duration(seconds: 30),
       onTimeout: () => throw const ex.ServerException(
         message: AppStrings.responseTimeout,
       ),
@@ -34,7 +48,8 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
       model,
       AppConstants.suggestionsPrompt(response),
     );
-    final List<String> suggestions = data.text?.split(',') ?? [];
+    final List<String> suggestions =
+        data.text?.trim().replaceAll('"', '').split(',') ?? [];
     return suggestions;
   }
 }
