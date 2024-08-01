@@ -7,7 +7,7 @@ AI Chatter is a sophisticated chat application leveraging Google's Gemini large 
 ## Features
 
 - **Light/Dark Theme Switching**: Easily switch between light and dark themes.
-- **Localization**: Supports English, Arabic, and Spanish languages.
+- **Localization**: Supports English and Arabic languages.
 - **Future Suggestions**: Option to turn on/off future message suggestions.
 - **Feedback and Issue Reporting**: Report issues and send feedback via email.
 - **Internet Connection Check**: Checks for an internet connection when the user sends a new message.
