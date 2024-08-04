@@ -40,7 +40,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    context.read<ChatCubit>().getCachedMessages();
     _scrollPositionsListener.itemPositions.addListener(_scrollListener);
     super.initState();
   }
@@ -79,11 +78,16 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    bool isLandscape = context.orientation == Orientation.landscape;
+    bool hideContent = isLandscape && _keyboardShown;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: ListTile(
-          leading: const AppLogo(size: 40),
+          leading: const AppLogo(
+            size: 40,
+            isHero: true,
+          ),
           title: Text(
             context.tr(AppStrings.appName),
             style: context.textTheme.titleLarge,
@@ -112,88 +116,91 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         ),
         child: Column(
           children: [
-            Expanded(
-              flex: 5,
-              child: BlocConsumer<ChatCubit, ChatState>(
+            if (!hideContent) ...[
+              Expanded(
+                flex: 5,
+                child: BlocConsumer<ChatCubit, ChatState>(
+                  listener: (context, state) {
+                    if (state.requestState != RequestState.initial) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        _scrollToBottom(
+                          force: !_showScrollButton.value ||
+                              state.messages.last.isMe,
+                          loading: state.requestState == RequestState.loading,
+                        );
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state.messages.isEmpty) {
+                      return const StartChatWidget();
+                    }
+                    return Stack(
+                      alignment: AlignmentDirectional.bottomCenter,
+                      children: [
+                        ScrollablePositionedList.separated(
+                          key: const ValueKey<String>('chat-list'),
+                          itemScrollController: _scrollController,
+                          itemPositionsListener: _scrollPositionsListener,
+                          minCacheExtent: 1000,
+                          initialScrollIndex: state.messages.length - 1,
+                          itemCount: state.requestState == RequestState.loading
+                              ? state.messages.length + 1
+                              : state.messages.length,
+                          separatorBuilder: (context, index) => 10.h,
+                          itemBuilder: (context, index) {
+                            if (index == state.messages.length) {
+                              return const MessageLoading();
+                            }
+                            return MessageItem(
+                              message: state.messages[index],
+                            );
+                          },
+                        ),
+                        Positioned(
+                          bottom: 8,
+                          child: ScrollToBottomButton(
+                            showScrollButton: _showScrollButton,
+                            onPressed: () => _scrollToBottom(force: true),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
-                  if (state.requestState != RequestState.initial) {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      _scrollToBottom(
-                        force: !_showScrollButton.value,
-                        loading: state.requestState == RequestState.loading,
-                      );
-                    });
+                  if (state.suggestions.isNotEmpty) {
+                    _scrollToBottom(force: !_showScrollButton.value);
                   }
                 },
                 builder: (context, state) {
-                  if (state.messages.isEmpty) {
-                    return const StartChatWidget();
-                  }
-                  return Stack(
-                    alignment: AlignmentDirectional.bottomCenter,
-                    children: [
-                      ScrollablePositionedList.separated(
-                        key: const ValueKey<String>('chat-list'),
-                        itemScrollController: _scrollController,
-                        itemPositionsListener: _scrollPositionsListener,
-                        minCacheExtent: 1000,
-                        initialScrollIndex: state.messages.length - 1,
-                        itemCount: state.requestState == RequestState.loading
-                            ? state.messages.length + 1
-                            : state.messages.length,
-                        separatorBuilder: (context, index) => 10.h,
-                        itemBuilder: (context, index) {
-                          if (index == state.messages.length) {
-                            return const MessageLoading();
-                          }
-                          return MessageItem(
-                            message: state.messages[index],
-                          );
-                        },
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        child: ScrollToBottomButton(
-                          showScrollButton: _showScrollButton,
-                          onPressed: () => _scrollToBottom(force: true),
-                        ),
-                      ),
-                    ],
+                  if (state.suggestions.isEmpty) return 8.h;
+                  return SizedBox(
+                    height: 64,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(12),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return OutlinedButton(
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            _messageController.text =
+                                state.suggestions[index].trim();
+                          },
+                          child: Text(
+                            state.suggestions[index].trim(),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => 10.w,
+                      itemCount: state.suggestions.length,
+                    ),
                   );
                 },
-              ),
-            ),
-            BlocConsumer<ChatCubit, ChatState>(
-              listener: (context, state) {
-                if (state.suggestions.isNotEmpty) {
-                  _scrollToBottom(force: !_showScrollButton.value);
-                }
-              },
-              builder: (context, state) {
-                if (state.suggestions.isEmpty) return 8.h;
-                return SizedBox(
-                  height: 64,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(12),
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return OutlinedButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          _messageController.text =
-                              state.suggestions[index].trim();
-                        },
-                        child: Text(
-                          state.suggestions[index].trim(),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => 10.w,
-                    itemCount: state.suggestions.length,
-                  ),
-                );
-              },
-            ),
+              )
+            ],
             ChatField(
               controller: _messageController,
               onSend: () => _onSend(context, _messageController.text),
@@ -216,6 +223,17 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (!force) {
       return;
     }
+    _showScrollButton.value = false;
+    // if (loading) {
+    //   if (_scrollPositionsListener.itemPositions.value.last.index >=
+    //       cubit.state.messages.length) {
+    //     return;
+    //   }
+    // }
+    // if (_scrollPositionsListener.itemPositions.value.last.index >=
+    //     cubit.state.messages.length - 1) {
+    //   return;
+    // }
     if (!animate) {
       _scrollController.jumpTo(
         index: loading

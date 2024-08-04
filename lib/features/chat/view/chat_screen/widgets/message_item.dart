@@ -4,16 +4,19 @@ import 'package:ai_chatter/core/extensions/navigation_extension.dart';
 import 'package:ai_chatter/core/extensions/popup_extension.dart';
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
-import 'package:ai_chatter/core/utils/images.dart';
 import 'package:ai_chatter/core/utils/strings.dart';
 
 import 'package:ai_chatter/core/utils/utils.dart';
 import 'package:ai_chatter/features/chat/model/models/message_model.dart';
 import 'package:ai_chatter/features/chat/view/chat_screen/logic/chat_cubit.dart';
+import 'package:ai_chatter/features/chat/view/chat_screen/widgets/custom_markdown.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sticky_headers/sticky_headers.dart';
+
+import '../../../../../core/widgets/app_logo.dart';
 
 class MessageItem extends StatefulWidget {
   final MessageModel message;
@@ -212,57 +215,71 @@ class _MessageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment:
-          widget.message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        if (!widget.message.isMe) ...[
-          Image.asset(
-            Images.appLogo,
-            width: 40,
-          ),
-          5.w,
-        ],
-        Container(
-          padding: const EdgeInsets.all(8),
-          constraints: BoxConstraints(
-            maxWidth: context.screenWidth * 0.8,
-            // minWidth: context.screenWidth * 0.1,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(15),
+    return StickyHeader(
+      overlapHeaders: true,
+      header: !widget.message.isMe
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const AppLogo(size: 40),
+                5.w,
+              ],
+            )
+          : const SizedBox.shrink(),
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: widget.message.isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        children: [
+          if (!widget.message.isMe) 45.w,
+          Container(
+            padding: const EdgeInsets.all(8),
+            constraints: BoxConstraints(
+              maxWidth: context.screenWidth * 0.8,
+              // minWidth: context.screenWidth * 0.1,
             ),
-            color: widget.message.isMe
-                ? context.colorScheme.primary
-                : context.colorScheme.onBackground.withOpacity(0.2),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(15),
+              ),
+              color: widget.message.isMe
+                  ? context.colorScheme.primary
+                  : context.colorScheme.onBackground.withOpacity(0.2),
+            ),
+            child: !widget.message.isMe && !widget.message.hasError
+                ? CustomMarkdown(
+                    data: widget.message.message,
+                    isSelect: widget.canSelect,
+                  )
+                : widget.canSelect
+                    ? SelectableText(
+                        widget.message.hasError
+                            ? context.tr(widget.message.message)
+                            : widget.message.message,
+                        style: TextStyle(
+                          color: widget.message.isMe
+                              ? context.colorScheme.background
+                              : widget.message.hasError
+                                  ? Colors.red
+                                  : null,
+                        ),
+                      )
+                    : Text(
+                        widget.message.hasError
+                            ? context.tr(widget.message.message)
+                            : widget.message.message,
+                        style: TextStyle(
+                          color: widget.message.isMe
+                              ? context.colorScheme.background
+                              : widget.message.hasError
+                                  ? Colors.red
+                                  : null,
+                        ),
+                      ),
           ),
-          child: widget.canSelect
-              ? SelectableText(
-                  widget.message.message,
-                  style: TextStyle(
-                    color: widget.message.isMe
-                        ? context.colorScheme.background
-                        : widget.message.hasError
-                            ? Colors.red
-                            : null,
-                  ),
-                )
-              : Text(
-                  widget.message.hasError
-                      ? context.tr(widget.message.message)
-                      : widget.message.message,
-                  style: TextStyle(
-                    color: widget.message.isMe
-                        ? context.colorScheme.background
-                        : widget.message.hasError
-                            ? Colors.red
-                            : null,
-                  ),
-                ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

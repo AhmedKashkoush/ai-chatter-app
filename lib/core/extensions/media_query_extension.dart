@@ -7,4 +7,5 @@ extension MediaQueryExtension on BuildContext {
   Size get screenSize => MediaQuery.sizeOf(this);
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
+  Orientation get orientation => mediaQuery.orientation;
 }

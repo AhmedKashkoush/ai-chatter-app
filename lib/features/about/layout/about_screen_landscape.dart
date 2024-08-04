@@ -9,12 +9,9 @@ class AboutScreenLandscape extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Center(
-              child: Image.asset(
-                Images.appLogo,
-                height: 160,
-              ),
+              child: AppLogo(size: 160),
             ),
           ),
           Expanded(

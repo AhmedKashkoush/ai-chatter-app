@@ -8,10 +8,7 @@ class AboutScreenPortrait extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Image.asset(
-          Images.appLogo,
-          height: 160,
-        ),
+        const AppLogo(size: 160),
         20.h,
         const DescriptionSection(),
         20.h,

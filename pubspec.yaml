@@ -38,6 +38,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   flutter_dotenv: ^5.1.0
   flutter_email_sender: ^6.0.3
+  flutter_markdown: ^0.6.20
   get_it: ^7.6.7
   google_generative_ai: ^0.4.3
   ionicons: ^0.2.2
@@ -46,6 +47,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   share_plus: ^7.2.2
   shared_preferences: ^2.2.3
+  sticky_headers: ^0.3.0+2
   url_launcher: ^6.3.0
 
 dev_dependencies:

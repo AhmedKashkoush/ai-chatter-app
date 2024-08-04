@@ -259,6 +259,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_markdown:
+    dependency: "direct main"
+    description:
+      name: flutter_markdown
+      sha256: "5b24061317f850af858ef7151dadbb6eb77c1c449c954c7bb064e8a5e0e7d81f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.20"
   flutter_native_splash:
     dependency: "direct dev"
     description:
@@ -373,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  markdown:
+    dependency: transitive
+    description:
+      name: markdown
+      sha256: ef2a1298144e3f985cc736b22e0ccdaf188b5b3970648f2d9dc13efd1d9df051
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.2.2"
   matcher:
     dependency: transitive
     description:
@@ -618,6 +634,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+  sticky_headers:
+    dependency: "direct main"
+    description:
+      name: sticky_headers
+      sha256: "9b3dd2cb0fd6a7038170af3261f855660cbb241cb56c501452cb8deed7023ede"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0+2"
   stream_channel:
     dependency: transitive
     description:

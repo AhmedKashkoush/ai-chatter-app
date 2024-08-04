@@ -4,20 +4,27 @@ import 'package:flutter/material.dart';
 
 class AppLogo extends StatelessWidget {
   final double size;
+  final bool isHero;
   const AppLogo({
     super.key,
     this.size = 200,
+    this.isHero = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: AppConstants.logoTag,
-      child: Image.asset(
-        Images.appLogo,
-        width: size,
-        height: size,
-      ),
-    );
+    return isHero
+        ? Hero(
+            tag: AppConstants.logoTag,
+            child: Image.asset(
+              Images.appLogo,
+              width: size,
+              height: size,
+            ))
+        : Image.asset(
+            Images.appLogo,
+            width: size,
+            height: size,
+          );
   }
 }
