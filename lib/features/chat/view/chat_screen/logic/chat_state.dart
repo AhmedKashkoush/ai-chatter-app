@@ -6,6 +6,7 @@ class ChatState {
   final RequestState requestState;
   final String error;
   final bool cacheLoaded;
+  final ChatSession? session;
 
   const ChatState({
     this.messages = const [],
@@ -13,6 +14,7 @@ class ChatState {
     this.requestState = RequestState.initial,
     this.error = '',
     this.cacheLoaded = false,
+    this.session,
   });
 
   ChatState copyWith({
@@ -21,6 +23,7 @@ class ChatState {
     RequestState? requestState,
     String? error,
     bool? cacheLoaded,
+    ChatSession? session,
   }) {
     return ChatState(
       messages: messages ?? this.messages,
@@ -28,6 +31,7 @@ class ChatState {
       requestState: requestState ?? this.requestState,
       error: error ?? this.error,
       cacheLoaded: cacheLoaded ?? this.cacheLoaded,
+      session: session ?? this.session,
     );
   }
 }

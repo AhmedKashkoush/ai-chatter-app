@@ -45,6 +45,9 @@ class _ChatFieldState extends State<ChatField> {
         decoration: InputDecoration(
           filled: true,
           fillColor: context.colorScheme.onBackground.withOpacity(0.2),
+          contentPadding: const EdgeInsets.all(
+            12,
+          ),
           suffixIconColor: context.colorScheme.primary,
           suffixIcon: IconButton(
             onPressed: _canSend ? widget.onSend : null,

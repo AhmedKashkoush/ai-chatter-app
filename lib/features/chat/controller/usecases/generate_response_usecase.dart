@@ -8,7 +8,8 @@ class GenerateResponseUseCase {
 
   const GenerateResponseUseCase(this.baseChatRepository);
 
-  Future<Either<Failure, GenerateContentResponse>> call(String message) async {
-    return await baseChatRepository.generateResponse(message);
+  Future<Either<Failure, GenerateContentResponse>> call(
+      String message, ChatSession? session) async {
+    return await baseChatRepository.generateResponse(message, session);
   }
 }

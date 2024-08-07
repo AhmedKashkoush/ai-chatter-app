@@ -1,5 +1,4 @@
 import 'package:ai_chatter/core/extensions/space_extension.dart';
-import 'package:ai_chatter/core/utils/images.dart';
 import 'package:ai_chatter/core/widgets/app_logo.dart';
 import 'package:ai_chatter/core/widgets/orientation_widget.dart';
 import 'package:ai_chatter/features/about/widgets/contacts_section.dart';

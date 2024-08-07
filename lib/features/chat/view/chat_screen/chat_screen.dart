@@ -55,16 +55,21 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeMetrics() {
+    _scrollWhenKeyboardIsShown(context);
+    super.didChangeMetrics();
+  }
+
+  void _scrollWhenKeyboardIsShown(BuildContext context) {
     final double bottomInsets = View.of(context).viewInsets.bottom;
     final bool keyboardShown = bottomInsets > 0;
     if (keyboardShown != _keyboardShown) {
       _keyboardShown = keyboardShown;
-      _scrollListener();
+
       if (_keyboardShown) {
         _scrollToBottom(force: !_showScrollButton.value, animate: false);
       }
     }
-    super.didChangeMetrics();
+    _scrollListener();
   }
 
   @override

@@ -32,7 +32,7 @@ class ChatCubit extends Cubit<ChatState> {
         );
 
   void clearChatHistory() async {
-    final Either<Failure, Unit> result = await clearChatHistoryUseCase();
+    final Either<Failure, ChatSession> result = await clearChatHistoryUseCase();
     result.fold(
       (failure) => emit(
         state.copyWith(
@@ -40,9 +40,13 @@ class ChatCubit extends Cubit<ChatState> {
           error: failure.message,
         ),
       ),
-      (_) => emit(
+      (session) => emit(
         state.copyWith(
-            requestState: RequestState.success, messages: [], suggestions: []),
+          requestState: RequestState.success,
+          messages: [],
+          suggestions: [],
+          session: session,
+        ),
       ),
     );
   }
@@ -57,16 +61,18 @@ class ChatCubit extends Cubit<ChatState> {
 
   void getCachedMessages() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final Either<Failure, List<MessageModel>> result = getCachedChatUseCase();
+    final Either<Failure, (List<MessageModel>, ChatSession)> result =
+        getCachedChatUseCase();
     result.fold(
       (failure) => state.copyWith(
         messages: [],
       ),
-      (messages) {
+      (response) {
         emit(
           state.copyWith(
-            messages: messages,
+            messages: response.$1,
             cacheLoaded: true,
+            session: response.$2,
           ),
         );
         if (state.messages.last.isMe) return;
@@ -94,7 +100,7 @@ class ChatCubit extends Cubit<ChatState> {
     );
 
     final Either<Failure, GenerateContentResponse> result =
-        await generateResponseUseCase(message.message);
+        await generateResponseUseCase(message.message, state.session);
 
     result.fold(
       (failure) {

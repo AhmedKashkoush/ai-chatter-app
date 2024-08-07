@@ -50,13 +50,20 @@ void _initRepositories() {
 
 void _initLocal() {
   locator.registerLazySingleton<BaseChatLocalDataSource>(
-    () => ChatLocalDataSource(locator()),
+    () => ChatLocalDataSource(
+      locator(),
+      locator(),
+    ),
   );
 }
 
 void _initRemote() {
   locator.registerLazySingleton<BaseChatRemoteDataSource>(
-    () => ChatRemoteDataSource(locator(), locator(), locator(), locator()),
+    () => ChatRemoteDataSource(
+      locator(),
+      locator(),
+      locator(),
+    ),
   );
 }
 
@@ -112,10 +119,10 @@ void _initExternal() {
       apiKey: AppConstants.apiKey,
     ),
   );
-  final ChatSession chat = locator<GenerativeModel>().startChat();
-  locator.registerLazySingleton<ChatSession>(
-    () => chat,
-  );
+  // final ChatSession chat = locator<GenerativeModel>().startChat();
+  // locator.registerLazySingleton<ChatSession>(
+  //   () => chat,
+  // );
   locator.registerLazySingleton<Connectivity>(
     () => Connectivity(),
   );

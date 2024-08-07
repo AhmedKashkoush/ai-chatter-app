@@ -1,6 +1,6 @@
 import 'package:ai_chatter/core/extensions/space_extension.dart';
 import 'package:ai_chatter/core/extensions/theme_extension.dart';
-import 'package:ai_chatter/core/utils/images.dart';
+import 'package:ai_chatter/core/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 
 class MessageLoading extends StatelessWidget {
@@ -13,10 +13,7 @@ class MessageLoading extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Image.asset(
-          Images.appLogo,
-          width: 40,
-        ),
+        const AppLogo(size: 40),
         10.w,
         ...List.generate(
           3,

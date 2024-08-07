@@ -30,10 +30,10 @@ class ChatRepository implements BaseChatRepository {
 
   @override
   Future<Either<Failure, ai.GenerateContentResponse>> generateResponse(
-      String message) async {
+      String message, ai.ChatSession? session) async {
     try {
       final ai.GenerateContentResponse response =
-          await remoteDataSource.sendMessage(message);
+          await remoteDataSource.sendMessage(message, session);
       return Right(response);
     } on NetworkException catch (e) {
       return Left(
@@ -85,9 +85,10 @@ class ChatRepository implements BaseChatRepository {
   }
 
   @override
-  Either<Failure, List<MessageModel>> getCachedChat() {
+  Either<Failure, (List<MessageModel>, ai.ChatSession)> getCachedChat() {
     try {
-      final List<MessageModel> messages = localDataSource.getCachedChat();
+      final (List<MessageModel>, ai.ChatSession) messages =
+          localDataSource.getCachedChat();
       return Right(messages);
     } on CacheException catch (e) {
       return Left(
@@ -99,10 +100,10 @@ class ChatRepository implements BaseChatRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> clearChatHistory() async {
+  Future<Either<Failure, ai.ChatSession>> clearChatHistory() async {
     try {
-      await localDataSource.clearChatHistory();
-      return const Right(unit);
+      final ai.ChatSession session = await localDataSource.clearChatHistory();
+      return Right(session);
     } on CacheException catch (e) {
       return Left(
         CacheFailure(
